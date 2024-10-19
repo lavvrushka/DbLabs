@@ -1,0 +1,75 @@
+Выбрать всех пользователей:
+SELECT * FROM "User";
+
+Получить всех пациентов и их врачей:
+SELECT Patient.first_name, Patient.last_name, Doctor.first_name AS doctor_first_name, Doctor.last_name AS doctor_last_name
+FROM Patient
+JOIN Doctor ON Patient.facility_id = Doctor.facility_id;
+
+Получить все медицинские записи пациента:
+SELECT * FROM MedicalRecord WHERE patient_id = 1;
+
+Обновить статус приёма:
+UPDATE Appointment SET status = 'Completed' WHERE appointment_id = 1;
+
+Удалить старые назначения:
+DELETE FROM Prescription WHERE issue_date < '2020-01-01';
+
+
+Изменение таблицы (добавление нового столбца):
+
+ALTER TABLE Patient ADD COLUMN phone_number VARCHAR(15);
+
+2. Вставка данных
+
+INSERT INTO Patient (user_id, first_name, last_name, facility_id, date_of_birth, gender, insurance_id)
+VALUES (11, 'John', 'Doe', 1, '1990-05-15', 'Male', 101);
+
+3. Простая выборка данных
+SELECT * FROM Patient;
+
+Фильтрация по дате рождения:
+
+SELECT first_name, last_name FROM Patient WHERE date_of_birth > '1990-01-01';
+
+4. Объединение данных (JOIN)
+
+SELECT Patient.first_name, Patient.last_name, Doctor.first_name AS doctor_first_name, Doctor.last_name AS doctor_last_name
+FROM Patient
+JOIN Doctor ON Patient.facility_id = Doctor.facility_id;
+
+5. Агрегатные функции и группировка
+Подсчет количества пациентов в каждом медицинском учреждении:
+
+SELECT MedicalFacility.facility_name, COUNT(Patient.patient_id) AS patient_count
+FROM Patient
+JOIN MedicalFacility ON Patient.facility_id = MedicalFacility.facility_id
+GROUP BY MedicalFacility.facility_name;
+
+6. Обновление данных
+Обновление данных пациента:
+
+UPDATE Patient SET insurance_id = 105 WHERE patient_id = 1;
+
+7. Удаление данных
+
+DELETE FROM Patient WHERE patient_id = 1;
+
+
+8. Сортировка и ограничение выборки
+
+SELECT first_name, last_name FROM Patient ORDER BY last_name ASC;
+Сортируем пациентов по фамилии в алфавитном порядке (ASC — по возрастанию).
+
+Ограничение количества результатов:
+
+SELECT first_name, last_name FROM Patient LIMIT 5
+LIMIT, чтобы отобразить только первые 5 записей.
+
+9. Сложные выборки и вложенные запросы
+Выбор всех пациентов, у которых врач — "Cardiologist":
+
+SELECT Patient.first_name, Patient.last_name
+FROM Patient
+JOIN Doctor ON Patient.facility_id = Doctor.facility_id
+WHERE Doctor.specialization = 'Cardiologist';

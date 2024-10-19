@@ -1,0 +1,13 @@
+INSERT INTO "User" (username, password_hash, email) VALUES
+('doctor01', 'hashed_password_1', 'doctor01@example.com'),
+('patient01', 'hashed_password_2', 'patient01@example.com');
+
+INSERT INTO Role (role_name) VALUES
+('Doctor'),
+('Patient');
+
+INSERT INTO Doctor (user_id, first_name, last_name, facility_id, specialization) VALUES
+(1, 'John', 'Doe', 1, 'Cardiologist');
+
+INSERT INTO Patient (user_id, first_name, last_name, date_of_birth, gender, insurance_id) VALUES
+(2, 'Jane', 'Doe', '1990-05-15', 'Female', 1);

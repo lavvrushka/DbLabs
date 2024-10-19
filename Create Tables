@@ -1,0 +1,99 @@
+CREATE TABLE "User" (
+    user_id SERIAL PRIMARY KEY,                     -- Первичный ключ
+    username VARCHAR(100) NOT NULL,                 -- Имя пользователя
+    password_hash VARCHAR(255) NOT NULL,            -- Хэш пароля
+    email VARCHAR(255) UNIQUE NOT NULL,             -- Уникальный email
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP, -- Дата создания
+    role_id INTEGER REFERENCES Role(role_id)        -- Внешний ключ на роль
+);
+
+
+CREATE TABLE Role (
+    role_id SERIAL PRIMARY KEY,                     -- Первичный ключ
+    role_name VARCHAR(100) NOT NULL                 -- Название роли
+);
+
+CREATE TABLE Log (
+    log_id SERIAL PRIMARY KEY,                      -- Первичный ключ
+    user_id INTEGER REFERENCES "User"(user_id),     -- Внешний ключ на таблицу User
+    action VARCHAR(255),                            -- Описание действия
+    timestamp TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP -- Время действия
+);
+
+CREATE TABLE Doctor (
+    doctor_id SERIAL PRIMARY KEY,                   -- Первичный ключ
+    user_id INTEGER REFERENCES "User"(user_id),     -- Внешний ключ на таблицу User
+    first_name VARCHAR(100) NOT NULL,               -- Имя врача
+    last_name VARCHAR(100) NOT NULL,                -- Фамилия врача
+    facility_id INTEGER REFERENCES MedicalFacility(facility_id), -- Внешний ключ на мед. учреждение
+    specialization VARCHAR(255)                    -- Специализация врача
+);
+
+CREATE TABLE Patient (
+    patient_id SERIAL PRIMARY KEY,                  -- Первичный ключ
+    user_id INTEGER REFERENCES "User"(user_id),     -- Внешний ключ на таблицу User
+    first_name VARCHAR(100) NOT NULL,               -- Имя пациента
+    last_name VARCHAR(100) NOT NULL,                -- Фамилия пациента
+    facility_id INTEGER REFERENCES MedicalFacility(facility_id), -- Внешний ключ на мед. учреждение
+    date_of_birth DATE NOT NULL,                    -- Дата рождения пациента
+    gender VARCHAR(100),                            -- Пол пациента
+    insurance_id INTEGER                            -- Идентификатор страховки
+);
+
+CREATE TABLE MedicalFacility (
+    facility_id SERIAL PRIMARY KEY,                 -- Первичный ключ
+    facility_name VARCHAR(255) NOT NULL,            -- Название мед. учреждения
+    address VARCHAR(255),                           -- Адрес учреждения
+    phone_number VARCHAR(255),                      -- Номер телефона
+    email VARCHAR(255),                             -- Email учреждения
+    website VARCHAR(255),                           -- Веб-сайт
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP -- Дата создания
+);
+
+CREATE TABLE MedicalRecord (
+    record_id SERIAL PRIMARY KEY,                   -- Первичный ключ
+    patient_id INTEGER REFERENCES Patient(patient_id), -- Внешний ключ на пациента
+    doctor_id INTEGER REFERENCES Doctor(doctor_id),    -- Внешний ключ на врача
+    diagnosis TEXT,                                 -- Диагноз
+    treatment_plan TEXT,                            -- План лечения
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP -- Время создания записи
+);
+
+CREATE TABLE Prescription (
+    prescription_id SERIAL PRIMARY KEY,             -- Первичный ключ
+    patient_id INTEGER REFERENCES Patient(patient_id), -- Внешний ключ на пациента
+    medication_name VARCHAR(255),                   -- Название лекарства
+    dosage VARCHAR(255),                            -- Дозировка
+    instructions TEXT,                              -- Инструкции по приёму
+    issue_date DATE                                 -- Дата выписки рецепта
+);
+
+CREATE TABLE Appointment (
+    appointment_id SERIAL PRIMARY KEY,              -- Первичный ключ
+    patient_id INTEGER REFERENCES Patient(patient_id), -- Внешний ключ на пациента
+    doctor_id INTEGER REFERENCES Doctor(doctor_id),    -- Внешний ключ на врача
+    appointment_date TIMESTAMPTZ,                   -- Дата приема
+    status VARCHAR(100),                            -- Статус приема
+    facility_id INTEGER REFERENCES MedicalFacility(facility_id) -- Внешний ключ на мед. учреждение
+);
+
+CREATE TABLE LabTest (
+    lab_test_id SERIAL PRIMARY KEY,                 -- Первичный ключ
+    patient_id INTEGER REFERENCES Patient(patient_id), -- Внешний ключ на пациента
+    doctor_id INTEGER REFERENCES Doctor(doctor_id),    -- Внешний ключ на врача
+    test_type VARCHAR(255),                         -- Тип анализа
+    result TEXT,                                    -- Результат анализа
+    test_date TIMESTAMPTZ,                          -- Дата анализа
+    status VARCHAR(100),                            -- Статус анализа
+    facility_id INTEGER REFERENCES MedicalFacility(facility_id) -- Внешний ключ на мед. учреждение
+);
+
+CREATE TABLE Treatment (
+    treatment_id SERIAL PRIMARY KEY,                -- Первичный ключ
+    record_id INTEGER REFERENCES MedicalRecord(record_id), -- Внешний ключ на мед. запись
+    treatment_description TEXT,                     -- Описание лечения
+    start_date DATE,                                -- Дата начала лечения
+    end_date DATE,                                  -- Дата окончания лечения
+    status VARCHAR(100)                             -- Статус лечения
+);
+

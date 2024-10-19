@@ -1,0 +1,3 @@
+CREATE INDEX idx_email ON "User"(email);
+
+ALTER TABLE Prescription ADD CONSTRAINT chk_dosage CHECK (dosage > 0);
